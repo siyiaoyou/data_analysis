@@ -1,0 +1,481 @@
+import pandas as pd
+data_sku = pd.read_csv("datas/sku.csv")
+data_user = pd.read_csv("datas/user.csv")
+data_user_act = pd.read_csv("datas/user_act.csv")
+
+data_sku_20 = pd.read_csv("datas/sku.csv",nrows = 20)
+data_user_20 = pd.read_csv("datas/user.csv",nrows = 20)
+data_user_act_20 = pd.read_csv("datas/user_act.csv",nrows = 20)
+
+# 查看user_act数据的行列数
+print('数据行数、列数为:',data_user_act.shape,'\n前五行数据为:',data_user_act.head())
+
+# 查看数据形状
+rows,cols=data_user_act.shape
+print("user_act数据共有 %s 行，有 %s 列。" % (rows, cols))
+
+# 查看数据的前五行
+head = data_user_act.head()
+print('\n',head)
+
+# 查看数据的基本情况
+data_user_act.info(null_counts=True)
+
+import pandas as pd
+
+# 计算客户个数
+user_num =len(data_user_act['user'].unique())
+print("客户总数为:",user_num)
+
+# 计算客户行为次数
+user_counts = data_user_act['user'].value_counts()
+print("每个客户的交易次数为:\n",user_counts)
+
+# 分离交易数据
+data_user_act_2 = data_user_act[data_user_act['act_type']==2]
+
+# 计算客户交易次数
+user_counts_2 = data_user_act_2['user'].value_counts()
+print("每个客户的交易次数为:\n",user_counts)
+
+import pandas as pd
+
+# 书写正则表达式
+pattern = '\d{10}'
+
+# 筛选异常值
+outlier = data_user_act[data_user_act['act_time'].str.match(pattern,case=True)==False]
+# 统计不同类型的异常值及其数量
+outlier_counts = outlier["act_time"].value_counts()
+print(outlier_counts)
+
+# 计算缺失值*总计
+data_user_act.isna().sum().sum()
+
+# 计算缺失值*分列
+data_user_act.isna().sum()
+
+# 查看缺失值*分列
+data_user_act[data_user_act.isnull().T.any() == True]
+
+# 删除缺失值
+data_user_act_del = data_user_act.dropna()
+
+'''
+import pandas as pd
+
+# 去掉交易时间为0的行
+data = data.drop(data[data['unix_time'] == 0].index)
+
+# 将异常值填补为正常值
+data.loc[data['unix_time']=='14 3264000','unix_time'] = 1473264000
+
+print(data.loc[data['unix_time'] == '14 3264000'])
+print(data.loc[data['unix_time'] == 0])
+
+import pandas as pd
+
+# 查看交易金额为'\N'的行数
+print("交易金额异常的记录共有%s行。" % (len(data[data['payment'] == '\\N'])))
+
+# 去除交易金额为'\N'的行
+data = data.drop(data[data['payment']=='\\N'].index)
+
+print(data[data['payment'] == '\\N'])
+
+
+import pandas as pd
+# 筛选describe中有无附言为空的行
+describe_null =  data[data['describe'].isnull()]
+
+print("交易附言为空的行共有%s条。"%  len(describe_null))
+print(describe_null.head())
+'''
+import pandas as pd
+
+# 时间格式转换,unit='s'
+data_user_act_2['act_time'] = pd.to_datetime(data_user_act_2['act_time'])
+print(data_user_act_2.tail(5))
+# 时区转换
+data_user_act_2['act_time'] = data_user_act_2['act_time'] + pd.Timedelta(hours=8)
+print(data_user_act_2.tail(5))
+'''
+import pandas as pd
+
+# 将payment列标准化
+data['payment'] =data['payment']/100
+
+print(data.head())
+'''
+#    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price'][0], data_user[data_user['id']==data_user_act['user'][0]]['address'][0], data_user[data_user['id']==data_user_act['user'][0]]['birthday'][0], data_user[data_user['id']==data_user_act['user'][0]]['gender'][0]]
+#    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], float(data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price']), data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
+
+import csv
+data_biaotou = ["user_id", "act_time", "act_type", "sku_id", "sku_price", "user_address", "user_birthday", "user_gender"]
+with open('user_all.csv','w', encoding = 'utf_8_sig') as file:
+    writer = csv.writer(file)
+    writer.writerow(data_biaotou)
+    #data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act['sku'][0]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
+    for i in range(37207644):
+        data_row = [data_user_act['user'][i], pd.to_datetime(data_user_act['act_date'][i] + ' ' + data_user_act['act_time'][i]), data_user_act['act_type'][i], data_user_act['sku'][i], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act['sku'][i]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act['user'][i]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][i]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][i]].index.tolist()[0]]]
+        writer.writerow(data_row)
+    #writer.writerow(data_row)
+file.close()
+
+# data_user_act_del
+import csv
+data_biaotou = ["user_id", "act_time", "act_type", "sku_id", "sku_price", "user_address", "user_birthday", "user_gender"]
+with open('user_100000.csv','w', encoding = 'utf_8_sig') as file:
+    writer = csv.writer(file)
+    writer.writerow(data_biaotou)
+    #data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act['sku'][0]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
+    for i in range(100000):
+        data_row = [data_user_act_del['user'][i], pd.to_datetime(data_user_act_del['act_date'][i] + ' ' + data_user_act_del['act_time'][i]), data_user_act_del['act_type'][i], data_user_act_del['sku'][i], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act_del['sku'][i]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act_del['user'][i]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act_del['user'][i]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act_del['user'][i]].index.tolist()[0]]]
+        writer.writerow(data_row)
+    #writer.writerow(data_row)
+file.close()
+
+# data_user_act_2
+# 重置索引
+data_user_act_2 = data_user_act_2.reset_index()
+import csv
+data_biaotou = ["user_id", "act_time", "act_type", "sku_id", "sku_price", "user_address", "user_birthday", "user_gender"]
+with open('user_2_100w.csv','w', encoding = 'utf_8_sig') as file:
+    writer = csv.writer(file)
+    writer.writerow(data_biaotou)
+    #data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act['sku'][0]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
+    for i in range(1000000):
+        data_row = [data_user_act_2['user'][i], pd.to_datetime(data_user_act_2['act_date'][i] + ' ' + data_user_act_2['act_time'][i]), data_user_act_2['act_type'][i], data_user_act_2['sku'][i], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act_2['sku'][i]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]]]
+        writer.writerow(data_row)
+    #writer.writerow(data_row)
+file.close()
+
+i = i
+data_row = [data_user_act_2['user'][i], pd.to_datetime(data_user_act_2['act_date'][i] + ' ' + data_user_act_2['act_time'][i]), data_user_act_2['act_type'][i], data_user_act_2['sku'][i], data_sku['price'][data_sku[data_sku['sku_id']==data_user_act_2['sku'][i]].index.tolist()[0]], data_user['address'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act_2['user'][i]].index.tolist()[0]]]
+
+
+import pandas as pd
+data_10w = pd.read_csv("user_100000.csv")
+data_all0 = pd.read_csv("user_all.csv")
+data_2_100w = pd.read_csv("user_2_100w.csv")
+
+import pandas as pd
+
+# 检测重复值
+duplicate_values = data_user_act.duplicated(keep='first')
+duplicate_values = duplicate_values[duplicate_values==True]
+print("重复数据有%s行。"% len(duplicate_values))
+
+# 去掉重复值
+data.drop_duplicates(inplace=True,keep='first')
+print("处理之后，交易记录变为%s行。" % len(data))
+
+data_10w['act_time'] = pd.to_datetime(data_10w['act_time'])
+data_2_100w['act_time'] = pd.to_datetime(data_2_100w['act_time'])
+
+#pd.to_datetime(data_user_act_2['act_date'][i] + ' ' + data_user_act_2['act_time'][i])
+
+data_user_act_2_groupby_act_date = data_user_act_2.groupby('act_date').count()
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(72,12))
+
+# 绘制折线图
+day = data_10w['act_time'].dt.date.value_counts()
+print(day.head())
+day.plot()
+# 设置图形标题
+plt.title('不同时间的交易次数分布',fontproperties="SimHei")
+
+# 设置y轴标签
+plt.ylabel('交易次数',fontproperties="SimHei")
+
+# 设置x轴标签
+plt.xlabel('时间',fontproperties="SimHei")
+
+plt.show()
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(12,6))
+
+# 绘制折线图
+abs(data_2_100w["sku_price"]).groupby(data_2_100w['act_time'].dt.date).sum().plot()
+# 设置图形标题
+plt.title('不同时间的交易金额分布',fontproperties="SimHei")
+# 设置y轴标签
+plt.ylabel('交易金额',fontproperties="SimHei")
+# 设置x轴标签
+plt.xlabel('时间',fontproperties="SimHei")
+plt.show()
+
+
+import pandas as pd
+
+# 时间限定
+data = data[(data['pay_time'] >= pd.Timestamp('2016-07-01')) & (data['pay_time']<=pd.Timestamp('2018-01-01'))]
+
+print(data.shape)
+
+
+import pandas as pd
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(8,6))
+
+# 绘制条形图
+data_2_100w['act_time'].dt.hour.value_counts().sort_index().plot(kind='bar',color='orange',rot=360)
+
+# 设置图形标题
+plt.title('每天24小时的交易次数分布',fontproperties="SimHei")
+
+# 设置x轴标签
+plt.xlabel('小时',fontproperties="SimHei")
+
+# 设置y轴标签
+plt.ylabel('交易次数',fontproperties="SimHei")
+
+plt.show()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(16, 5))
+
+# 绘制核密度图
+sns.kdeplot(data_2_100w['user_id'].value_counts(),shade=True,legend=False)
+
+# 设置x，y轴标签
+plt.xlabel('交易次数',fontproperties="SimHei")
+plt.ylabel('频率',fontproperties="SimHei")
+
+# 设置图的标题
+plt.title('客户交易次数分布',fontproperties="SimHei")
+
+plt.show()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(16, 5))
+
+# 绘制核密度图
+sns.kdeplot(abs(data_2_100w['sku_price']).groupby(data_2_100w['user_id']).mean(),shade=True,legend=False)
+
+# 设置x，y轴标签
+plt.xlabel('平均交易金额',fontproperties="SimHei")
+plt.ylabel('频率',fontproperties="SimHei")
+
+# 设置图的标题
+plt.title('客户平均交易金额的分布',fontproperties="SimHei")
+
+plt.show()
+'''
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+fig,[ax1,ax2] = plt.subplots(1,2,figsize=(16, 5))
+
+# 定义和选取金额流入流出的交易记录
+input_payment = data[data['payment']<0]['user_id']
+output_payment = data[data['payment']>0]['user_id']
+
+# 计算每个客户的流入流出次数
+input_payment_count = input_payment.value_counts()
+output_payment_count = output_payment.value_counts()
+# 绘制直方图
+sns.distplot(input_payment_count,ax=ax1)
+sns.distplot(output_payment_count,ax=ax2)
+
+# 设置标题
+ax1.set_title('客户交易的流入次数分布')
+ax2.set_title('客户交易的流出次数分布')
+ax1.set_xlabel('')
+ax2.set_xlabel('')
+plt.show()
+
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+# 定义和选取金额流入流出的交易记录
+input_payment = data[data['payment'] < 0]
+output_payment = data[data['payment'] > 0]
+
+# 计算每个客户的流入流出金额
+input_payment_amount = input_payment['payment'].groupby(data['user_id']).mean()
+output_payment_amount = output_payment['payment'].groupby(data['user_id']).mean()
+
+fig,[ax1,ax2] = plt.subplots(1,2,figsize=(16, 5))
+
+# 绘制直方图
+sns.distplot(input_payment_amount,ax=ax1)
+sns.distplot(output_payment_amount,ax=ax2)
+
+# 设置标题
+ax1.set_title('客户交易的平均流入金额分布')
+ax2.set_title('客户交易的平均流出金额分布')
+
+plt.show()
+'''
+
+import matplotlib.pyplot as plt  # 导入库
+
+fig = plt.figure(figsize=(12,6))
+plt.rcParams['font.sans-serif'] = 'simhei'
+data = [33148590, 2193079, 441965, 826734, 597263]
+label = ['浏览', '下单', '关注', '评论', '加入购物车'] 
+
+# 绘制饼图
+plt.pie(data, labels = label, autopct='%.2f%%')
+# 设置图形标题
+plt.title('不同行为的次数分布',fontproperties="SimHei")
+
+plt.show()
+
+
+
+
+import pandas as pd
+import jieba
+
+# 数据采样
+data = data.sample(20000,random_state = 22)
+
+# 文本分词
+data['describe_cutted'] = data['describe'].apply(lambda x :' '.join(jieba.cut(x)))
+# 过滤停用词  
+def del_stopwords(words):  
+    output = ''  
+    for word in words:
+        if word not in stopwords:  
+            output += word
+    return output
+
+data['describe_cutted'] =data['describe_cutted'].apply(lambda x:del_stopwords(x))
+
+print(data.head())
+
+
+from wordcloud import WordCloud         
+import matplotlib.pyplot as plt
+
+# 数据采样
+data = data.sample(20000,random_state = 22)
+
+# 文本拼接
+describe_document = " ".join(data_user['address'])
+fig = plt.figure(figsize=(20,10))
+w=wordcloud.WordCloud(background_color="white",height=450,width=800,font_path='msyh.ttc')
+w.generate(describe_document)
+plt.imshow(w)
+
+
+# 创建词云对象
+wordcloud = WordCloud(background_color='white',font_path='./FangSong.ttf',mask=background_Image,scale=2,random_state=30,collocations=False)
+
+# 生成词云
+wordcloud.generate(describe_document)
+
+plt.imshow(wordcloud)
+plt.axis("off")
+plt.show()
+
+import jieba
+       
+# 提取关键词
+tags = jieba.analyse.extract_tags(describe_document,topK=50,withWeight=True)
+
+# 输出关键词
+for tag in tags:
+    print(tag)
+
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(16, 5))
+
+# 绘制箱型图
+sns.boxplot(x='user_gender', y='sku_price', data=data_2_100w)
+
+# 设置x，y轴标签
+plt.xlabel('性别',fontproperties="SimHei")
+plt.ylabel('交易金额',fontproperties="SimHei")
+
+# 设置图的标题
+plt.title('不同性别交易金额的分布',fontproperties="SimHei")
+
+plt.show()
+
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+fig = plt.figure(figsize=(16, 5))
+
+# 绘制小提琴图
+sns.violinplot(x='user_gender', y='act_type', data=data_all0)
+
+# 设置x，y轴标签
+plt.xlabel('性别',fontproperties="SimHei")
+plt.ylabel('行为次数',fontproperties="SimHei")
+
+# 设置图的标题
+plt.title('不同性别行为次数的分布',fontproperties="SimHei")
+
+plt.show()
+
+# sku的price排序
+data_sku.sort_values(by=['price'],ascending=False)
+
+data_user_act_sku_1_87860 = data_user_act[data_user_act['sku'] == 87860]
+data_user_act_sku_2_376525 = data_user_act[data_user_act['sku'] == 376525]
+data_user_act_sku_3_77883 = data_user_act[data_user_act['sku'] == 77883]
+data_user_act_sku_4_75161 = data_user_act[data_user_act['sku'] == 75161]
+data_user_act_sku_5_19454 = data_user_act[data_user_act['sku'] == 19454]
+data_user_act_sku_05_349505 = data_user_act[data_user_act['sku'] == 349505]
+data_user_act_sku_04_267050 = data_user_act[data_user_act['sku'] == 267050]
+data_user_act_sku_03_143468 = data_user_act[data_user_act['sku'] == 143468]
+data_user_act_sku_02_82415 = data_user_act[data_user_act['sku'] == 82415]
+data_user_act_sku_01_70647 = data_user_act[data_user_act['sku'] == 70647]
+
+data_user_act.describe()
+data_user_act['sku'].mode()
+
+import pandas as pd
+data_10w = pd.read_csv("user_100000.csv")
+data_all0 = pd.read_csv("user_all.csv")
+data_2_100w = pd.read_csv("user_2_100w.csv")
+    
+from dash import Dash, html, dcc
+import plotly.express as px
+import pandas as pd
+
+app = Dash(__name__)
+ 
+# 画图
+fig5 = px.box(data_all0, x="user_gender", y="sku_price", color="user_gender")
+fig6 = px.violin(data_all0, x="user_gender", y="sku_price", color="user_gender")
+fig7 = px.strip(data_all0, x="user_gender", y="sku_price", color="user_gender")
+app.layout = html.Div(children=[
+                html.H1(children='机器学习-牛文钰'),
+                html.Div(children='''
+                A visualization assignment of data from my last lesson.    
+                '''),
+                html.H5(children='箱形图(Box)'),
+                dcc.Graph(id='exp',figure=fig5),
+                html.H5(children='小提琴图(Violin)'),
+                dcc.Graph(id='exp',figure=fig6),
+                html.H5(children='小提琴密度图(Strip)'),
+                dcc.Graph(id='exp',figure=fig7)])
+ 
+if __name__ == '__main__':    
+    app.run_server()
+
+
