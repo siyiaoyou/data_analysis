@@ -61,36 +61,7 @@ data_user_act[data_user_act.isnull().T.any() == True]
 # 删除缺失值
 data_user_act_del = data_user_act.dropna()
 
-'''
-import pandas as pd
 
-# 去掉交易时间为0的行
-data = data.drop(data[data['unix_time'] == 0].index)
-
-# 将异常值填补为正常值
-data.loc[data['unix_time']=='14 3264000','unix_time'] = 1473264000
-
-print(data.loc[data['unix_time'] == '14 3264000'])
-print(data.loc[data['unix_time'] == 0])
-
-import pandas as pd
-
-# 查看交易金额为'\N'的行数
-print("交易金额异常的记录共有%s行。" % (len(data[data['payment'] == '\\N'])))
-
-# 去除交易金额为'\N'的行
-data = data.drop(data[data['payment']=='\\N'].index)
-
-print(data[data['payment'] == '\\N'])
-
-
-import pandas as pd
-# 筛选describe中有无附言为空的行
-describe_null =  data[data['describe'].isnull()]
-
-print("交易附言为空的行共有%s条。"%  len(describe_null))
-print(describe_null.head())
-'''
 import pandas as pd
 
 # 时间格式转换,unit='s'
@@ -99,14 +70,7 @@ print(data_user_act_2.tail(5))
 # 时区转换
 data_user_act_2['act_time'] = data_user_act_2['act_time'] + pd.Timedelta(hours=8)
 print(data_user_act_2.tail(5))
-'''
-import pandas as pd
 
-# 将payment列标准化
-data['payment'] =data['payment']/100
-
-print(data.head())
-'''
 #    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price'][0], data_user[data_user['id']==data_user_act['user'][0]]['address'][0], data_user[data_user['id']==data_user_act['user'][0]]['birthday'][0], data_user[data_user['id']==data_user_act['user'][0]]['gender'][0]]
 #    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], float(data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price']), data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
 
@@ -275,55 +239,7 @@ plt.ylabel('频率',fontproperties="SimHei")
 plt.title('客户平均交易金额的分布',fontproperties="SimHei")
 
 plt.show()
-'''
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
 
-fig,[ax1,ax2] = plt.subplots(1,2,figsize=(16, 5))
-
-# 定义和选取金额流入流出的交易记录
-input_payment = data[data['payment']<0]['user_id']
-output_payment = data[data['payment']>0]['user_id']
-
-# 计算每个客户的流入流出次数
-input_payment_count = input_payment.value_counts()
-output_payment_count = output_payment.value_counts()
-# 绘制直方图
-sns.distplot(input_payment_count,ax=ax1)
-sns.distplot(output_payment_count,ax=ax2)
-
-# 设置标题
-ax1.set_title('客户交易的流入次数分布')
-ax2.set_title('客户交易的流出次数分布')
-ax1.set_xlabel('')
-ax2.set_xlabel('')
-plt.show()
-
-import pandas as pd
-import matplotlib.pyplot as plt
-import seaborn as sns
-
-# 定义和选取金额流入流出的交易记录
-input_payment = data[data['payment'] < 0]
-output_payment = data[data['payment'] > 0]
-
-# 计算每个客户的流入流出金额
-input_payment_amount = input_payment['payment'].groupby(data['user_id']).mean()
-output_payment_amount = output_payment['payment'].groupby(data['user_id']).mean()
-
-fig,[ax1,ax2] = plt.subplots(1,2,figsize=(16, 5))
-
-# 绘制直方图
-sns.distplot(input_payment_amount,ax=ax1)
-sns.distplot(output_payment_amount,ax=ax2)
-
-# 设置标题
-ax1.set_title('客户交易的平均流入金额分布')
-ax2.set_title('客户交易的平均流出金额分布')
-
-plt.show()
-'''
 
 import matplotlib.pyplot as plt  # 导入库
 
