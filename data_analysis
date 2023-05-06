@@ -61,7 +61,6 @@ data_user_act[data_user_act.isnull().T.any() == True]
 # 删除缺失值
 data_user_act_del = data_user_act.dropna()
 
-
 import pandas as pd
 
 # 时间格式转换,unit='s'
@@ -70,7 +69,14 @@ print(data_user_act_2.tail(5))
 # 时区转换
 data_user_act_2['act_time'] = data_user_act_2['act_time'] + pd.Timedelta(hours=8)
 print(data_user_act_2.tail(5))
+'''
+import pandas as pd
 
+# 将payment列标准化
+data['payment'] =data['payment']/100
+
+print(data.head())
+'''
 #    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price'][0], data_user[data_user['id']==data_user_act['user'][0]]['address'][0], data_user[data_user['id']==data_user_act['user'][0]]['birthday'][0], data_user[data_user['id']==data_user_act['user'][0]]['gender'][0]]
 #    data_row = [data_user_act['user'][0], pd.to_datetime(data_user_act['act_date'][0] + ' ' + data_user_act['act_time'][0]), data_user_act['act_type'][0], data_user_act['sku'][0], float(data_sku[data_sku['sku_id']==data_user_act['sku'][0]]['price']), data_user['address'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['birthday'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]], data_user['gender'][data_user[data_user['id']==data_user_act['user'][0]].index.tolist()[0]]]
 
@@ -131,8 +137,8 @@ duplicate_values = duplicate_values[duplicate_values==True]
 print("重复数据有%s行。"% len(duplicate_values))
 
 # 去掉重复值
-data.drop_duplicates(inplace=True,keep='first')
-print("处理之后，交易记录变为%s行。" % len(data))
+data_user_act.drop_duplicates(inplace=True,keep='first')
+print("处理之后，交易记录变为%s行。" % len(data_user_act))
 
 data_10w['act_time'] = pd.to_datetime(data_10w['act_time'])
 data_2_100w['act_time'] = pd.to_datetime(data_2_100w['act_time'])
@@ -255,35 +261,43 @@ plt.title('不同行为的次数分布',fontproperties="SimHei")
 
 plt.show()
 
+# 男女人数
+data_user.groupby(['gender']).count()
 
+import matplotlib.pyplot as plt  # 导入库
 
+fig = plt.figure(figsize=(12,6))
+plt.rcParams['font.sans-serif'] = 'simhei'
+data = [803962, 804746]
+label = ['女', '男'] 
+
+# 绘制饼图
+plt.pie(data, labels = label, autopct='%.2f%%')
+# 设置图形标题
+plt.title('用户男女分布',fontproperties="SimHei")
+
+plt.show()
+
+import matplotlib.pyplot as plt  # 导入库
+
+fig = plt.figure(figsize=(12,6))
+plt.rcParams['font.sans-serif'] = 'simhei'
+data = data_sku.sort_values(by=['price'],ascending=False)
+
+# 绘制横向图
+plt.hist(data['price'], bins = 10, log=True, rwidth=0.8, orientation = 'horizontal')
+# 设置图形标题
+plt.title('不同商品的价格',fontproperties="SimHei")
+
+plt.show()
+
+# 众数商品
+data_sku[data_sku['sku_id']==248051.0]
 
 import pandas as pd
 import jieba
-
-# 数据采样
-data = data.sample(20000,random_state = 22)
-
-# 文本分词
-data['describe_cutted'] = data['describe'].apply(lambda x :' '.join(jieba.cut(x)))
-# 过滤停用词  
-def del_stopwords(words):  
-    output = ''  
-    for word in words:
-        if word not in stopwords:  
-            output += word
-    return output
-
-data['describe_cutted'] =data['describe_cutted'].apply(lambda x:del_stopwords(x))
-
-print(data.head())
-
-
 from wordcloud import WordCloud         
 import matplotlib.pyplot as plt
-
-# 数据采样
-data = data.sample(20000,random_state = 22)
 
 # 文本拼接
 describe_document = " ".join(data_user['address'])
@@ -292,16 +306,6 @@ w=wordcloud.WordCloud(background_color="white",height=450,width=800,font_path='m
 w.generate(describe_document)
 plt.imshow(w)
 
-
-# 创建词云对象
-wordcloud = WordCloud(background_color='white',font_path='./FangSong.ttf',mask=background_Image,scale=2,random_state=30,collocations=False)
-
-# 生成词云
-wordcloud.generate(describe_document)
-
-plt.imshow(wordcloud)
-plt.axis("off")
-plt.show()
 
 import jieba
        
@@ -393,5 +397,3 @@ app.layout = html.Div(children=[
  
 if __name__ == '__main__':    
     app.run_server()
-
-
